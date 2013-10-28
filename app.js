@@ -14,7 +14,6 @@ var app = express(),
 var common = require('./common')(app, express, path, io, mongoose, models);
 var routes = require('./routes')(app, models);
 
-// Define routes
 app.get('/', function(req, res) {
     res.render('index');
 });

@@ -25,7 +25,7 @@
 			  <div class="navbar-inner">
 			    <span class="navbar-brand">Simple multiroom chat</span>
 		    	<ul id="menu" class="nav pull-right">
-			    {{#if controller.loggedIn}}
+			    {{#if loggedIn}}
 		    		<li>You are <strong>{{controller.user.login}}</strong></li>
 		    		<li><a href="#" {{action logout}}>Logout</a></li>
 		    	{{else}}
@@ -35,7 +35,7 @@
 		    	</ul>
 			  </div>
 			</div>
-		    {{#if controller.loggedIn}}
+		    {{#if loggedIn}}
 		    {{else}}
 			<div class="modal hide fade" id="user_login" role="dialog" aria-labelledby="LoginWindow" aria-hidden="true">
 			  <div class="modal-header">
@@ -60,17 +60,17 @@
 <!-- End -->
 <!-- Chat templates -->		
 		<script type="text/x-handlebars" data-template-name="chat">
-			{{#if controller.loggedIn}}
+			{{#if loggedIn}}
 			{{outlet main}}
 			{{outlet list}}
 			{{/if}}
 		</script>
 		<script type="text/x-handlebars" data-template-name="chat/main">
-			{{#if controller.loggedIn}}
+			{{#if loggedIn}}
 			<div class="row-fluid" id="chatContent">
 			  <div class="span12 tab-content">
 			  	<div class="tab-pane active" id="list">
-				  	{{#each controller.allRooms}}
+				  	{{#each allRooms}}
 				  	<p class="room-link">
 				  		<a href="#" {{bind-attr id=_id}} class="select-room" {{action open_room this}}>
 				  			{{title}}
@@ -79,10 +79,10 @@
 				  	</p>
 				  	{{/each}}
 			  	</div>
-			  	{{#each controller.userRooms}}
+			  	{{#each userRooms}}
 			  	<div class="tab-pane" {{bind-attr id=_id}}> 
 					<div class="span2">
-						{{#each controller.currentRoom.users}}
+						{{#each users}}
 						<p class="user">
 							<a href="" {{action sendToUser this}}>{{login}}</a>
 						</p>
@@ -116,7 +116,7 @@
 			{{/if}}
 		</script>
 		<script type="text/x-handlebars" data-template-name="chat/list">
-			{{#if controller.loggedIn}}
+			{{#if loggedIn}}
 			<div class="row-fluid" id="roomList">
 				<a class="btn btn-success" id="newRoom" href="#createRoom" data-toggle="modal">Create Room</a>
 				<div class="modal hide fade" id="createRoom" role="dialog" aria-labelledby="CreateRoomWindow" aria-hidden="true">
@@ -130,7 +130,7 @@
 				</div>
 				<ul id="room_list" class="nav nav-tabs">
 					<li class="active"><a href="#list" class="btn btn-primary" data-toggle="tab">Room list</a></li>
-					{{#each controller.userRooms}}
+					{{#each userRooms}}
 					<li>{{sharp_href _id title}}</li>
 					{{/each}}
 				</ul>
