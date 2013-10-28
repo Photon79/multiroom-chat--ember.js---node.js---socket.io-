@@ -15,7 +15,32 @@ module.exports = function(app, models) {
 		});
 	});
 	// Leave room
-	app.get('/api/rooms/logout', function(req, res) {
+	app.delete('/api/rooms/logout/:id/:user_id', function(req, res) {
+		models.UserRoom.find({user: req.params.user_id}, function(err, userRoom) {
+			if (err) {
+				res.json(500, {
+					error: err
+				});
+			}
+			else {
+				if (userRoom) {
+					userRoom = userRoom[0];
+					var i = 0;
+					_.each(userRoom.room, function(id) {
+						if (id.toString() === req.params.id) {
+							return;
+						}
+						i++;
+					});
+			 		userRoom.room.splice(i, 1);
+			 		userRoom.save();
+					res.send(200, '');
+				}
+				else {
+					res.send(404, '');
+				}
+			}
+		});
 	});
 	// Get room users
 	app.get('/api/rooms/:id/users', function(req, res) {
@@ -45,7 +70,6 @@ module.exports = function(app, models) {
 	});
 	// Get rooms where user is joined in
 	app.get('/api/rooms/user/:id', function(req, res) {
-		console.log(req.params.id);
 		models.UserRoom.find({user: req.params.id}, function(err, userRoom) {
 			if (err) {
 				res.json(500, {
@@ -66,7 +90,6 @@ module.exports = function(app, models) {
 							});
 						}
 						else {
-							console.log(rooms);					
 							res.json(200, rooms);
 						}
 					});
@@ -79,7 +102,6 @@ module.exports = function(app, models) {
 	});
 	// Create room
 	app.post('/api/rooms', function(req, res) {
-		console.log(req.body);
 		models.User.findOne(req.body.creator, function(err, user) {
 			if (err) {
 				res.json(500, {
@@ -89,7 +111,6 @@ module.exports = function(app, models) {
 			else {
 				room = new models.Room({creator: user._id, title: req.body.title, description: req.body.description || 'Simple chat room'});
 				room.save(function(err) {
-					console.log('New Room created');
 					if (err) {
 						res.json(500, {
 							error: err
@@ -104,7 +125,6 @@ module.exports = function(app, models) {
 							}
 							else {
 								if (userRoom) {
-									console.log('UserRoom found');
 									userRoom.room.push(room._id);
 									userRoom.save(function(err) {
 										if (err) {
@@ -118,7 +138,6 @@ module.exports = function(app, models) {
 									});
 								}
 								else {
-									console.log('Create new UserRoom');
 									userRoom = new models.UserRoom({user: user._id.toString()});
 									userRoom.room.push(room._id);
 									userRoom.save(function(err) {

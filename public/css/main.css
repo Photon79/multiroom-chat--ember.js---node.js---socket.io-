@@ -38,11 +38,7 @@ span.navbar-brand {
 	box-shadow: 2px 2px 5px;
 	padding: 10px;
 }
-a[data-toggle="tab"] {
-	background-position: 0 0 !important;
-	border: 1px solid #dadada !important;
-}
-a[data-toggle="tab"].btn-primary {
+li.btn-primary a[data-toggle="tab"] {
 	color: #ffffff;
 }
 #sendMessage {
@@ -64,9 +60,26 @@ a[data-toggle="tab"].btn-primary {
 	float: left;
 	margin-right: 30px;
 }
+.nav-tabs > li {
+	border-radius: 4px 4px 0 0 !important;
+	border-color: #bababa !important;
+	margin-left: 5px;
+}
+.nav-tabs > li:first-child {
+	margin-left: 0;
+}
+.nav-tabs > li.active {
+	border-color: transparent !important;
+}
 .nav-tabs > li > a {
-	padding-top: 4px !important;
-	padding-bottom: 4px !important;
+	padding: 0 !important;
+	background: transparent !important;
+	border: 0 none !important;
+	float: left !important;
+}
+.nav-tabs > li > button.close {
+	margin-left: 3px;
+	margin-right: -3px;
 }
 #chatContent {
 	padding: 0 10px;

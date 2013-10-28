@@ -17,6 +17,6 @@ Chat.Store = Emu.Store.extend({
 });
 
 $(document).on('tab.shown', 'a[data-toggle="tab"]', function (e) {
-	$(e.target).addClass('btn-primary');
-  	$(e.relatedTarget).removeClass('btn-primary');
+	$(e.target).parent().addClass('btn-primary');
+  	$(e.relatedTarget).parent().removeClass('btn-primary');
 });		

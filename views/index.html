@@ -80,7 +80,7 @@
 				  	{{/each}}
 			  	</div>
 			  	{{#each userRooms}}
-			  	<div class="tab-pane" {{bind-attr id=_id}}> 
+			  	<div class="tab-pane" {{bind-attr data-room=_id}}> 
 					<div class="span2">
 						{{#each users}}
 						<p class="user">
@@ -129,9 +129,9 @@
 				  </div>
 				</div>
 				<ul id="room_list" class="nav nav-tabs">
-					<li class="active"><a href="#list" class="btn btn-primary" data-toggle="tab">Room list</a></li>
+					<li class="active btn btn-primary"><a href="#list" data-toggle="tab">Room list</a></li>
 					{{#each userRooms}}
-					<li>{{sharp_href _id title}}</li>
+					<li class="btn" {{bind-attr data-id=_id}}>{{sharp_href _id title}}<button type="button" class="close" title="Leave room" {{action leave_room this}}>&times;</button></li>
 					{{/each}}
 				</ul>
 			</div>
@@ -215,11 +215,12 @@
 <!-- Including scripts -->
 		<script type="text/javascript" src="js/libs/jquery.js"></script>
 		<script type="text/javascript" src="js/libs/bootstrap.js"></script>
+		<script type="text/javascript" src="js/libs/lodash.js"></script>		
 		<script type="text/javascript" src="js/libs/handlebars.js"></script>
 		<script type="text/javascript" src="js/libs/ember.js"></script>
 		<script type="text/javascript" src="js/libs/ember-emu.js"></script>
 		<script type="text/javascript" src="js/libs/ember-sockets.js"></script>
-		<script src="js/libs/md5.js"></script>		
+		<script type="text/javascript" src="js/libs/md5.js"></script>		
 		<script type="text/javascript" src="js/helpers/main.js"></script>
 		<script type="text/javascript" src="js/app.js"></script>
 		<script type="text/javascript" src="js/views/user.js"></script>

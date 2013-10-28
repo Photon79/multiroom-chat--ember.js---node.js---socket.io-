@@ -16,5 +16,11 @@ module.exports = function(io, models) {
 			console.log('joinUser');
 			socket.broadcast.to(data.room_id).emit('joinUser', data);
 		});
+		socket.on('leaveRoom', function(data) {
+			socket.broadcast.to(data.room_id).emit('leaveUser', data.user_id);
+		});
+		socket.on('deleteRoom', function(data) {
+			socket.broadcast.to(data).emit('deleteRoom');
+		});
 	});
 };
