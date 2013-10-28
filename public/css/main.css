@@ -1,0 +1,88 @@
+html, body { 
+	height:100%; 
+	margin:0; 
+	padding:0; 
+}
+body {
+	min-height: 100%;
+}
+* html body {
+	height: 100%;
+}
+
+span.navbar-brand {
+	line-height: 40px;
+	font-size: 20px;
+	font-weight: bold;
+	color: #ffffff;
+	font-family: "Comic Sans MS";
+}
+#menu li {
+	line-height: 40px;
+	margin: 0 10px;
+	color: #ffffff;
+}
+#menu a {
+	padding: 0 !important;
+}
+.popover {
+	width: 300px;
+	height: 300px;
+	display: none;
+	top: 50%;
+	left: 50%;
+	margin-left: -150px;
+	margin-top: -150px;
+	border: 1px solid #000000;
+	z-index: 1000;
+	box-shadow: 2px 2px 5px;
+	padding: 10px;
+}
+a[data-toggle="tab"] {
+	background-position: 0 0 !important;
+	border: 1px solid #dadada !important;
+}
+a[data-toggle="tab"].btn-primary {
+	color: #ffffff;
+}
+#sendMessage {
+	float: right;
+}
+.ember-text-field {
+	margin-bottom: 0 !important;
+}
+.newMessage-input {
+	width: 100%;
+}
+.newMessage {
+	overflow: hidden;
+}
+.input {
+	margin-right: 80px;
+}
+#newRoom {
+	float: left;
+	margin-right: 30px;
+}
+.nav-tabs > li > a {
+	padding-top: 4px !important;
+	padding-bottom: 4px !important;
+}
+#chatContent {
+	padding: 0 10px;
+}
+/*#mainContent {
+	padding: 40px 10px;
+	position: relative;
+	margin-top: -40px;
+}
+#roomList {
+	height: 40px;
+	margin-top: -40px;
+}
+#wrapper { min-height:100%; }
+body .ember-view:first-child {
+	min-height: 100%;
+	height: auto !important;
+	height: 100%;
+}*/

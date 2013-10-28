@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Simple chat with multiroom</title>
+		<link rel="stylesheet" href="css/bootstrap.css" />
+		<link rel="stylesheet" href="css/main.css" media="all" />
+		<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+	</head>
+	<body>
+<!-- Main template -->		
+		<script type="text/x-handlebars" data-template-name="index">
+			<div id="wrapper">
+				{{outlet login}}
+				<div id="mainContent">
+					{{outlet chat}}
+				</div>
+			</div>
+		</script>
+<!-- End -->		
+<!-- User information and login/logout -->		
+		<script type="text/x-handlebars" data-template-name="user">
+			<div class="navbar navbar-inverse navbar-static-top">
+			  <div class="navbar-inner">
+			    <span class="navbar-brand">Simple multiroom chat</span>
+		    	<ul id="menu" class="nav pull-right">
+			    {{#if controller.loggedIn}}
+		    		<li>You are <strong>{{controller.user.login}}</strong></li>
+		    		<li><a href="#" {{action logout}}>Logout</a></li>
+		    	{{else}}
+		    		<li><a href="#user_register" data-toggle="modal">Register</a></li>
+		    		<li><a href="#user_login" data-toggle="modal">Login</a></li>
+		    	{{/if}}
+		    	</ul>
+			  </div>
+			</div>
+		    {{#if controller.loggedIn}}
+		    {{else}}
+			<div class="modal hide fade" id="user_login" role="dialog" aria-labelledby="LoginWindow" aria-hidden="true">
+			  <div class="modal-header">
+			    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			    <h3>Login</h3>
+			  </div>
+			  <div class="modal-body">
+			  	{{login-form submit="loginUser" submitTitle="Login"}}
+			  </div>
+			</div>
+			<div class="modal hide fade" id="user_register" role="dialog" aria-labelledby="RegisterWindow" aria-hidden="true">
+			  <div class="modal-header">
+			    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			    <h3>Registration</h3>
+			  </div>
+			  <div class="modal-body">
+			  	{{register-form submit="registerUser" submitTitle="Sign Up"}}
+			  </div>
+			</div>
+			{{/if}}
+		</script>
+<!-- End -->
+<!-- Chat templates -->		
+		<script type="text/x-handlebars" data-template-name="chat">
+			{{#if controller.loggedIn}}
+			{{outlet main}}
+			{{outlet list}}
+			{{/if}}
+		</script>
+		<script type="text/x-handlebars" data-template-name="chat/main">
+			{{#if controller.loggedIn}}
+			<div class="row-fluid" id="chatContent">
+			  <div class="span12 tab-content">
+			  	<div class="tab-pane active" id="list">
+				  	{{#each controller.allRooms}}
+				  	<p class="room-link">
+				  		<a href="#" {{bind-attr id=_id}} class="select-room" {{action open_room this}}>
+				  			{{title}}
+				  			<span class="description">{{description}}</span>
+				  		</a>
+				  	</p>
+				  	{{/each}}
+			  	</div>
+			  	{{#each controller.userRooms}}
+			  	<div class="tab-pane" {{bind-attr id=_id}}> 
+					<div class="span2">
+						{{#each controller.currentRoom.users}}
+						<p class="user">
+							<a href="" {{action sendToUser this}}>{{login}}</a>
+						</p>
+						{{/each}}
+					</div>
+					<div class="span10">
+				  		{{#each messages}}
+				  		<p class="oneMessage">
+				  			<div class="time left">
+				  				{{time}}
+				  			</div>
+				  			<div class="user left">
+				  				{{user.login}}
+				  			</div>
+				  			<div class="message left">
+				  				{{message}}
+				  			</div>
+				  		</p>
+				  		{{/each}}
+				  		<div class="newMessage">
+				  			<button class="btn btn-primary" id="sendMessage" {{action sendMessage}}>Send</button>
+				  			<div class="input">
+				  				{{view Chat.NewMessageView class="newMessage-input"}}
+				  			</div>
+				  		</div>
+				  	</div>
+			  	</div>
+			  	{{/each}}
+			  </div>
+			</div>		
+			{{/if}}
+		</script>
+		<script type="text/x-handlebars" data-template-name="chat/list">
+			{{#if controller.loggedIn}}
+			<div class="row-fluid" id="roomList">
+				<a class="btn btn-success" id="newRoom" href="#createRoom" data-toggle="modal">Create Room</a>
+				<div class="modal hide fade" id="createRoom" role="dialog" aria-labelledby="CreateRoomWindow" aria-hidden="true">
+				  <div class="modal-header">
+				    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				    <h3>Create Room</h3>
+				  </div>
+				  <div class="modal-body">
+				  	{{create-room-form submit="createRoom" submitTitle="Create"}}
+				  </div>
+				</div>
+				<ul id="room_list" class="nav nav-tabs">
+					<li class="active"><a href="#list" class="btn btn-primary" data-toggle="tab">Room list</a></li>
+					{{#each controller.userRooms}}
+					<li>{{sharp_href _id title}}</li>
+					{{/each}}
+				</ul>
+			</div>
+			{{/if}}
+		</script>
+<!-- End -->
+<!-- Components templates -->
+		<script type="text/x-handlebars" data-template-name="components/register-form">
+		  	<form class="form-horizontal" {{action "submit" on="submit"}}> 
+		  		<div class="control-group">
+		  			<label class="control-label" for="login">Login</label>
+		  			<div class="controls">
+		  				{{input type="text" required="true" value=login placeholder="Your login?"}}
+		  			</div>
+		  		</div>
+		  		<div class="control-group">
+		  			<label class="control-label" for="name">Name</label>
+		  			<div class="controls">
+		  				{{input type="text" required="true" value=name placeholder="Your name?"}}
+		  			</div>
+		  		</div>
+		  		<div class="control-group">
+		  			<label class="control-label" for="password">Password</label>
+		  			<div class="controls">
+		  				{{input required="true" type="password" value=pass placeholder="Your password?"}}
+		  			</div>
+		  		</div>
+		  		<div class="control-group">
+		  			<label class="control-label" for="regPassword2">Password</label>
+		  			<div class="controls">
+		  				{{input required="true" type="password" value=pass2 placeholder="Retype your password"}}
+		  			</div>
+		  		</div>
+				<div class="form-actions">
+				  <button id="loginSubmit" class="btn btn-primary" {{action "submit" on="click"}}>{{submitTitle}}</button>
+				  <a href="#" class="btn" data-dismiss="modal" aria-hidden="true">Cancel</a>
+				</div>
+		  	</form>
+		</script>
+		<script type="text/x-handlebars" data-template-name="components/login-form">
+		  	<form class="form-horizontal" {{action "submit" on="submit"}}> 
+		  		<div class="control-group">
+		  			<label class="control-label" for="login">Login</label>
+		  			<div class="controls">
+		  				{{input type="text" required="true" value=login placeholder="Your login?"}}
+		  			</div>
+		  		</div>
+		  		<div class="control-group">
+		  			<label class="control-label" for="password">Password</label>
+		  			<div class="controls">
+		  				{{input type="password" required="true" value=pass placeholder="Your password?"}}
+		  			</div>
+		  		</div>
+				<div class="form-actions">
+				  <button id="registerSubmit" class="btn btn-primary">{{submitTitle}}</button>
+				  <a href="#" class="btn" data-dismiss="modal" aria-hidden="true">Cancel</a>
+				</div>
+		  	</form>
+		</script>
+		<script type="text/x-handlebars" data-template-name="components/create-room-form">
+		  	<form class="form-horizontal" {{action "submit" on="submit"}}> 
+		  		<div class="control-group">
+		  			<label class="control-label" for="login">Title</label>
+		  			<div class="controls">
+		  				{{input type="text" required="true" value=title placeholder="Room title?"}}
+		  			</div>
+		  		</div>
+		  		<div class="control-group">
+		  			<label class="control-label" for="login">Description</label>
+		  			<div class="controls">
+		  				{{input type="text" required="true" value=description placeholder="Room description?"}}
+		  			</div>
+		  		</div>
+				<div class="form-actions">
+				  <button id="createRoomSubmit" class="btn btn-primary">{{submitTitle}}</button>
+				  <a href="#" class="btn" data-dismiss="modal" aria-hidden="true">Cancel</a>
+				</div>
+		  	</form>
+		</script>
+<!-- End -->
+<!-- Including scripts -->
+		<script type="text/javascript" src="js/libs/jquery.js"></script>
+		<script type="text/javascript" src="js/libs/bootstrap.js"></script>
+		<script type="text/javascript" src="js/libs/handlebars.js"></script>
+		<script type="text/javascript" src="js/libs/ember.js"></script>
+		<script type="text/javascript" src="js/libs/ember-emu.js"></script>
+		<script type="text/javascript" src="js/libs/ember-sockets.js"></script>
+		<script src="js/libs/md5.js"></script>		
+		<script type="text/javascript" src="js/helpers/main.js"></script>
+		<script type="text/javascript" src="js/app.js"></script>
+		<script type="text/javascript" src="js/views/user.js"></script>
+		<script type="text/javascript" src="js/views/chat.js"></script>
+		<script type="text/javascript" src="js/models/user.js"></script>
+		<script type="text/javascript" src="js/models/chat.js"></script>
+		<script type="text/javascript" src="js/router.js"></script>
+		<script type="text/javascript" src="js/controllers/chat.js"></script>
+		<script type="text/javascript" src="js/controllers/user.js"></script>
+<!-- End -->		
+	</body>
+</html>
