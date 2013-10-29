@@ -10,7 +10,7 @@ window.Chat = Em.Application.create({
 Chat.Store = Emu.Store.extend({
 	revision: 1,
 	adapter: Emu.RestAdapter.extend({
-		url: "http://localhost:3000",		
+		url: "http://localhost:3000",
 		namespace: 'api',
 		bulkCommit: false
 	})
@@ -19,4 +19,4 @@ Chat.Store = Emu.Store.extend({
 $(document).on('tab.shown', 'a[data-toggle="tab"]', function (e) {
 	$(e.target).parent().addClass('btn-primary');
   	$(e.relatedTarget).parent().removeClass('btn-primary');
-});		
+});

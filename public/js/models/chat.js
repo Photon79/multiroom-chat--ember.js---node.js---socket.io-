@@ -3,13 +3,7 @@ Chat.Room = Emu.Model.extend({
 	title: Emu.field('string'),
 	message: Emu.field("Chat.Message", {collection: true}),
 	description: Emu.field('string', {defaultValue: 'Simple chat room'}),
-	creator: Emu.field('Chat.User')
-});
-
-Chat.UserRoom = Emu.Model.extend({
-	_id: Emu.field('string', {primaryKey: true}),
-	user: Emu.field("Chat.User"),
-	room: Emu.field("Chat.Room", {collection: true})
+	creator: Emu.field('string')
 });
 
 Chat.Message = Emu.Model.extend({

@@ -1,21 +1,24 @@
 Chat.ChatController = Em.ObjectController.extend({
 	needs: ['user'],
 	content: [],
+	user: null,
+	allRooms: [],
+	userRooms: [],
 	actions: {
 		createRoom: function(params) {
-			var self = this;
-			var user = this.get('user');
-			var title = params.title;
-			var description = params.description;
+			var self = this,
+				user_id = this.get('user')._attributes['_id'],
+				title = params.title,
+				description = params.description || 'Simple chat room';
 			Em.set('Chat.MessageValue.value', '');
 			var room = Chat.Room.createRecord({
 				title: title,
 				description: description,
-				creator: user.primaryKeyValue()
+				creator: user_id
 			});
 			room.save();
 			room.on('didFinishSaving', function() {
-				self.socket.emit('newRoom', {title: room.get('title'), id: room.primaryKeyValue()});
+				self.socket.emit('newRoom', {title: room.get('title'), id: room.primaryKeyValue(), user_id: user_id});
 			});
 		},
 		sendToUser: function() {
@@ -51,33 +54,45 @@ Chat.ChatController = Em.ObjectController.extend({
 					_method: 'delete'
 				},
 				success: function(data) {
-					var userRooms = self.get('userRooms');
-					var idx = _.findIndex(userRooms, function(data) {
-						return room._id == data._id;
-					});
-					userRooms.splice(idx, 1);
-					self.set('userRooms', userRooms);
 					self.socket.emit('leaveRoom', {user_id: user_id, room_id: room._id});
-					$('li[data-id=' + room._id + ']').prev().remove();
-					$('li[data-id=' + room._id + ']').next().remove();
-					$('li[data-id=' + room._id + ']').remove();
-					$('div[data-room=' + room._id + ']').prev().remove();
-					$('div[data-room=' + room._id + ']').next().remove();
-					$('div[data-room=' + room._id + ']').remove();
 				},
 				error: function(data) {
 					console.log(data);
 				}
 			});
 		},
+		delete_room: function(room) {
+			var room_id = room.primaryKeyValue();
+			this.store.deleteRecord(room);
+			this.socket.emit('deleteRoom', room_id);
+			this.getUserRooms();
+		},
 		join_room: function(room) {
-			self.socket.join(room);
+			this.socket.emit('joinRoom', {room_id: room.primaryKeyValue(), user_id: this.get('user')._attributes['_id']});
 		}
+	},
+	getUserRooms: function() {
+		var self = this;
+		var user_id = this.get('user')._attributes['_id'];
+		$.ajax({
+			url: '/api/rooms/user/' + user_id,
+			method: 'GET',
+			success: function(data) {
+				self.set('userRooms', data);
+			},
+			error: function(data) {
+
+			}
+		})
 	},
 	sockets: {
 		reloadRoomList: function(data) {
 			console.log('ReloadRoomList');
-			this.set('allRooms', data);
+			this.set('allRooms', Chat.Room.find());
+		},
+		reloadUserRooms: function(data) {
+			console.log('ReloadUserRooms');
+			this.set('userRooms', data);
 		}
 	}
 });

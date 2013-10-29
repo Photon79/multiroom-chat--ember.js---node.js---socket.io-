@@ -186,7 +186,10 @@
 
       return $.ajax({
         url: this._getUrlForModel(model) + "/" + model.primaryKeyValue(),
-        type: "DELETE",
+        type: "POST",
+        data: {
+          _method: "delete"
+        },
         success: function() {
           return store.didDeleteRecord(model);
         },

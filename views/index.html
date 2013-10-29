@@ -9,7 +9,7 @@
 		<script type="text/javascript" src="/socket.io/socket.io.js"></script>
 	</head>
 	<body>
-<!-- Main template -->		
+<!-- Main template -->
 		<script type="text/x-handlebars" data-template-name="index">
 			<div id="wrapper">
 				{{outlet login}}
@@ -18,8 +18,8 @@
 				</div>
 			</div>
 		</script>
-<!-- End -->		
-<!-- User information and login/logout -->		
+<!-- End -->
+<!-- User information and login/logout -->
 		<script type="text/x-handlebars" data-template-name="user">
 			<div class="navbar navbar-inverse navbar-static-top">
 			  <div class="navbar-inner">
@@ -58,7 +58,7 @@
 			{{/if}}
 		</script>
 <!-- End -->
-<!-- Chat templates -->		
+<!-- Chat templates -->
 		<script type="text/x-handlebars" data-template-name="chat">
 			{{#if loggedIn}}
 			{{outlet main}}
@@ -70,17 +70,26 @@
 			<div class="row-fluid" id="chatContent">
 			  <div class="span12 tab-content">
 			  	<div class="tab-pane active" id="list">
-				  	{{#each allRooms}}
-				  	<p class="room-link">
-				  		<a href="#" {{bind-attr id=_id}} class="select-room" {{action open_room this}}>
-				  			{{title}}
-				  			<span class="description">{{description}}</span>
-				  		</a>
-				  	</p>
-				  	{{/each}}
+			  		<table class="table table-hover table-condensed left">
+			  			<tbody>
+				  			{{#each allRooms}}
+				  			<tr {{bind-attr id=_id}} title="Join to room">
+				  				<td class="pointer" {{action "open_room" this on="click"}}>
+			  						{{title}}
+				  				</td>
+				  				<td class="pointer" {{action "open_room" this on="click"}}>
+				  					<span class="description">{{description}}</span>
+				  				</td>
+				  				<td>
+				  					<a href="#" title="Delete room" class="delete_room" {{action delete_room this}}>{{room_delete_btn this controller.user}}</a>
+				  				</td>
+				  			</tr>
+				  			{{/each}}
+				  		</tbody>
+				  	</table>
 			  	</div>
 			  	{{#each userRooms}}
-			  	<div class="tab-pane" {{bind-attr data-room=_id}}> 
+			  	<div class="tab-pane" {{bind-attr data-room=_id}}>
 					<div class="span2">
 						{{#each users}}
 						<p class="user">
@@ -112,7 +121,7 @@
 			  	</div>
 			  	{{/each}}
 			  </div>
-			</div>		
+			</div>
 			{{/if}}
 		</script>
 		<script type="text/x-handlebars" data-template-name="chat/list">
@@ -140,7 +149,7 @@
 <!-- End -->
 <!-- Components templates -->
 		<script type="text/x-handlebars" data-template-name="components/register-form">
-		  	<form class="form-horizontal" {{action "submit" on="submit"}}> 
+		  	<form class="form-horizontal" {{action "submit" on="submit"}}>
 		  		<div class="control-group">
 		  			<label class="control-label" for="login">Login</label>
 		  			<div class="controls">
@@ -172,7 +181,7 @@
 		  	</form>
 		</script>
 		<script type="text/x-handlebars" data-template-name="components/login-form">
-		  	<form class="form-horizontal" {{action "submit" on="submit"}}> 
+		  	<form class="form-horizontal" {{action "submit" on="submit"}}>
 		  		<div class="control-group">
 		  			<label class="control-label" for="login">Login</label>
 		  			<div class="controls">
@@ -192,7 +201,7 @@
 		  	</form>
 		</script>
 		<script type="text/x-handlebars" data-template-name="components/create-room-form">
-		  	<form class="form-horizontal" {{action "submit" on="submit"}}> 
+		  	<form class="form-horizontal" {{action "submit" on="submit"}}>
 		  		<div class="control-group">
 		  			<label class="control-label" for="login">Title</label>
 		  			<div class="controls">
@@ -215,12 +224,12 @@
 <!-- Including scripts -->
 		<script type="text/javascript" src="js/libs/jquery.js"></script>
 		<script type="text/javascript" src="js/libs/bootstrap.js"></script>
-		<script type="text/javascript" src="js/libs/lodash.js"></script>		
+		<script type="text/javascript" src="js/libs/lodash.js"></script>
 		<script type="text/javascript" src="js/libs/handlebars.js"></script>
 		<script type="text/javascript" src="js/libs/ember.js"></script>
 		<script type="text/javascript" src="js/libs/ember-emu.js"></script>
 		<script type="text/javascript" src="js/libs/ember-sockets.js"></script>
-		<script type="text/javascript" src="js/libs/md5.js"></script>		
+		<script type="text/javascript" src="js/libs/md5.js"></script>
 		<script type="text/javascript" src="js/helpers/main.js"></script>
 		<script type="text/javascript" src="js/app.js"></script>
 		<script type="text/javascript" src="js/views/user.js"></script>
@@ -230,6 +239,6 @@
 		<script type="text/javascript" src="js/router.js"></script>
 		<script type="text/javascript" src="js/controllers/chat.js"></script>
 		<script type="text/javascript" src="js/controllers/user.js"></script>
-<!-- End -->		
+<!-- End -->
 	</body>
 </html>

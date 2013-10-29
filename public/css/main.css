@@ -1,7 +1,7 @@
-html, body { 
-	height:100%; 
-	margin:0; 
-	padding:0; 
+html, body {
+	height:100%;
+	margin:0;
+	padding:0;
 }
 body {
 	min-height: 100%;
@@ -84,18 +84,15 @@ li.btn-primary a[data-toggle="tab"] {
 #chatContent {
 	padding: 0 10px;
 }
-/*#mainContent {
-	padding: 40px 10px;
-	position: relative;
-	margin-top: -40px;
+.left {
+	float: left !important;
 }
-#roomList {
-	height: 40px;
-	margin-top: -40px;
+.pointer {
+	cursor: pointer;
 }
-#wrapper { min-height:100%; }
-body .ember-view:first-child {
-	min-height: 100%;
-	height: auto !important;
-	height: 100%;
-}*/
+.table {
+	width: auto !important;
+}
+.table th, .table td {
+	border-top: 0 none !important;
+}
