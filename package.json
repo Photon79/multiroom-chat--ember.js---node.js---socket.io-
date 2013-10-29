@@ -11,6 +11,7 @@
     "mongoose": "*",
     "ejs": "*",
     "lodash": "*",
-    "mongodb": "*"
+    "mongodb": "*",
+    "crypto": "*"
   }
 }

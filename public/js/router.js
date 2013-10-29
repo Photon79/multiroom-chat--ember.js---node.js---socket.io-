@@ -3,6 +3,28 @@ Chat.Router.map(function() {
 });
 
 Chat.IndexRoute = Em.Route.extend({
+	model: function() {
+		var self = this;
+		var uuid = null;
+		var promise = Em.Deferred.create();
+		if (uuid = Chat.authCookie()) {
+			Em.$.ajax({
+				url: '/api/users/uuid/' + uuid,
+				method: "GET",
+				success: function(data) {
+					// this.controllerFor('user').set('user', data);
+					// this.controllerFor('chat').set('user', data);
+					// this.controllerFor('chat').getUserRooms();
+					// this.controllerFor('chat').getRoomUsers();
+					// this.controllerFor('chat').set('allRooms', Chat.Room.find());
+					Chat.authCookie(data.sessionId);
+				},
+				error: function(err) {
+
+				}
+			});
+		}
+	},
 	renderTemplate: function() {
 		this.render('index');
 		this.render('user', {

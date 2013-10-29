@@ -3,5 +3,6 @@ Chat.User = Emu.Model.extend({
 	login: Emu.field('string'),
 	name: Emu.field('string'),
 	pass: Emu.field('string'),
-	loggedIn: Emu.field('boolean')
+	loggedIn: Emu.field('boolean'),
+	sessionId: Emu.field('string')
 });

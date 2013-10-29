@@ -75,7 +75,6 @@ Chat.ChatController = Em.ObjectController.extend({
 			this.set('currentRoom', room);
 		},
 		leave_room: function(room) {
-			console.log(room.title);
 			var self = this;
 			var user_id = this.get('user')._attributes['_id'];
 			$.ajax({
@@ -88,7 +87,6 @@ Chat.ChatController = Em.ObjectController.extend({
 					self.socket.emit('leaveRoom', {user_id: user_id, room_id: room._id});
 				},
 				error: function(err) {
-					console.log(data);
 				}
 			});
 		},
@@ -128,11 +126,9 @@ Chat.ChatController = Em.ObjectController.extend({
 	},
 	sockets: {
 		reloadRoomList: function(data) {
-			console.log('ReloadRoomList');
 			this.set('allRooms', data);
 		},
 		reloadUserRooms: function(data) {
-			console.log('ReloadUserRooms');
 			this.set('userRooms', data);
 		},
 		joinRoom: function() {

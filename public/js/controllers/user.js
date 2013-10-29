@@ -10,16 +10,19 @@ Chat.UserController = Em.ObjectController.extend({
 			user.set('loggedIn', false);
 			user.save();
 			this.set('user', null);
+			Chat.authCookie(null);
 			this.get('controllers.chat').set('loggedIn', false);
 			this.get('controllers.chat').set('allRooms', []);
 			this.get('controllers.chat').set('user', null);
 		},
 		loginUser: function(params) {
 			var self = this;
-			result = Chat.User.find({login: params.login, pass: CryptoJS.MD5(params.pass).toString(), loggedIn: false});
+			result = Chat.User.find({login: params.login, pass: params.pass, loggedIn: false});
 			result.on('didFinishLoading', function() {
 				if (result.get('content') && result.get('content').length > 0) {
 					var user_data = result.get('content')[0];
+					console.log('SessionId', user_data.get('sessionId'));
+					Chat.authCookie(user_data.get('sessionId'));
 					user = Chat.User.createRecord(user_data);
 					user.set('loggedIn', true);
 					user.save();
@@ -46,16 +49,24 @@ Chat.UserController = Em.ObjectController.extend({
 				user = Chat.User.createRecord({
 					login: params.login,
 					name: params.name,
-					pass: CryptoJS.MD5(params.pass).toString(),
-					loggedIn: true
+					pass: params.pass,
+					loggedIn: false
 				});
 				user.save();
 				user.on('didFinishSaving', function() {
-					self.set('user', user);
-					self.set('loggedIn', true);
-					self.get('controllers.chat').set('loggedIn', true);
-					self.get('controllers.chat').set('allRooms', Chat.Room.find());
-					self.get('controllers.chat').set('user', user);
+					result = Chat.User.find({login: user.get('login'), pass: params.pass, loggedIn: false});
+					result.on('didFinishLoading', function() {
+						if (result.get('content') && result.get('content').length > 0) {
+							var user_data = result.get('content')[0];
+							user = Chat.User.createRecord(user_data);
+							user.save();
+							self.set('user', user);
+							self.set('loggedIn', true);
+							self.get('controllers.chat').set('loggedIn', true);
+							self.get('controllers.chat').set('allRooms', Chat.Room.find());
+							self.get('controllers.chat').set('user', user);
+						}
+					});
 				});
 			}
 		}

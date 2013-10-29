@@ -3,7 +3,8 @@ module.exports = function(mongoose) {
 		name: String,
 		login: String,
 		pass: String,
-		loggedIn: Boolean
+		loggedIn: Boolean,
+		sessionId: String
 	});
 	this.User = mongoose.model('User', userSchema);
 

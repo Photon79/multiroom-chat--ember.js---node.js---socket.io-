@@ -4,7 +4,23 @@ window.Chat = Em.Application.create({
 		host: 'localhost',
 		port: 3000,
 		controllers: ['chat']
-	})
+	}),
+	lastSessionToken: null,
+	authCookie: function(value) {
+		if (arguments.length) {
+			if (value) {
+				Em.$.cookie('chat_sid', value);
+			}
+			else {
+				Em.$.removeCookie('chat_sid');
+			}
+		}
+		res = Em.$.cookie('chat_sid');
+		if (res) {
+			this.set('lastSessionToken', res);
+		}
+		return res;
+	}
 });
 
 Chat.Store = Emu.Store.extend({
@@ -16,26 +32,26 @@ Chat.Store = Emu.Store.extend({
 	})
 });
 
-$(document).on('tab.shown', 'a[data-toggle="tab"]', function (e) {
-	$(e.target).parent().addClass('btn-primary');
-  	$(e.relatedTarget).parent().removeClass('btn-primary');
+Em.$(document).on('tab.shown', 'a[data-toggle="tab"]', function (e) {
+	Em.$(e.target).parent().addClass('btn-primary');
+  	Em.$(e.relatedTarget).parent().removeClass('btn-primary');
 });
 
-$(document).on('shown', '#createRoom', function() {
-	$(this).find('input:first').focus();
+Em.$(document).on('shown', '#createRoom', function() {
+	Em.$(this).find('input:first').focus();
 });
-$(document).on('hide', '#createRoom', function() {
-	$(this).find('form').trigger('reset');
+Em.$(document).on('hide', '#createRoom', function() {
+	Em.$(this).find('form').trigger('reset');
 });
-$(document).on('shown', '#user_login', function() {
-	$(this).find('input:first').focus();
+Em.$(document).on('shown', '#user_login', function() {
+	Em.$(this).find('input:first').focus();
 });
-$(document).on('hide', '#user_login', function() {
-	$(this).find('form').trigger('reset');
+Em.$(document).on('hide', '#user_login', function() {
+	Em.$(this).find('form').trigger('reset');
 });
-$(document).on('shown', '#user_register', function() {
-	$(this).find('input:first').focus();
+Em.$(document).on('shown', '#user_register', function() {
+	Em.$(this).find('input:first').focus();
 });
-$(document).on('hide', '#user_register', function() {
-	$(this).find('form').trigger('reset');
+Em.$(document).on('hide', '#user_register', function() {
+	Em.$(this).find('form').trigger('reset');
 });
