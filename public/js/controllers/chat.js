@@ -11,10 +11,9 @@ Chat.ChatController = Em.ObjectController.extend({
 	actions: {
 		createRoom: function(params) {
 			var self = this,
-				user_id = this.get('user._id'),
+				user_id = this.get('user').primaryKeyValue(),
 				title = params.title,
 				description = params.description || 'Simple chat room';
-			Em.set('Chat.MessageValue.value', '');
 			var room = Chat.Room.createRecord({
 				title: title,
 				description: description,
@@ -33,25 +32,43 @@ Chat.ChatController = Em.ObjectController.extend({
 				self.getUserRooms();
 			});
 		},
-		sendToUser: function() {
-
+		sendToUser: function(user) {
+			var room_id = this.get('currentRoom').primaryKeyValue(),
+				user_login = user.get('login'),
+				input = $('input[data-id=' + room_id + ']');
+				old_value = input.val();
+			input.val(user_login + ', ' + old_value);
+			input.focus();
+			if (input.get(0).setSelectionRange) {
+		    	input.get(0).setSelectionRange(input.val().length, input.val().length);
+			} 
+			else if (input.get(0).createTextRange) {
+				var range = input.get(0).createTextRange();
+				range.collapse(true);
+				range.moveEnd('character', input.val().length);
+				range.moveStart('character', input.val().length);
+				range.select();
+			}
 		},
-		sendMessage: function(params) {
-			var self = this;
-			var currentRoom = this.get('currentRoom');
-			var currentUser = this.get('user');
+		sendMessage: function() {
+			var self = this,
+				currentRoom = this.get('currentRoom'),
+				currentUser = this.get('user');
+			var room_id = currentRoom.primaryKeyValue();
+			var text = $('input[data-id=' + room_id + ']').val();
 			var message = Chat.Message.createRecord({
-				room: currentRoom,
-				user: currentUser,
-				text: params.text,
-				time: new Date()
+				room: currentRoom.primaryKeyValue(),
+				user: currentUser.primaryKeyValue(),
+				message: text,
+				time: moment().format("YYYY-MM-DD HH:mm:ss")
 			});
 			message.save();
 			message.on('didFinishSaving', function() {
+				$('input[data-id=' + room_id + ']').val('');
 				self.socket.emit('newMessage', {
 					room_id: currentRoom.primaryKeyValue(),
-					user: currentUser.get('login'),
-					text: params.text,
+					user: currentUser.primaryKeyValue(),
+					message: text,
 					time: new Date()
 				});
 			});
@@ -73,8 +90,6 @@ Chat.ChatController = Em.ObjectController.extend({
 					_method: 'delete'
 				},
 				success: function(data) {
-					var now = new Date().getTime() / 1000;  
-	 				console.log('leave_room success', now);
 					self.socket.emit('leaveRoom', {user_id: user_id, room_id: room_id});
 				},
 				error: function(err) {
@@ -145,6 +160,9 @@ Chat.ChatController = Em.ObjectController.extend({
 		},
 		leaveRoom: function() {
 			this.getRoomUsers();
+		},
+		newMessage: function(data) {
+			console.log(data);
 		}
 	}
 });

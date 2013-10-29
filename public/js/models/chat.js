@@ -1,7 +1,3 @@
-Chat.ApplicationModel = Em.Object.extend({
-	sessionId: null
-});
-
 Chat.Room = Emu.Model.extend({
 	_id: Emu.field('string', {primaryKey: true}),
 	title: Emu.field('string'),
@@ -12,8 +8,8 @@ Chat.Room = Emu.Model.extend({
 
 Chat.Message = Emu.Model.extend({
 	_id: Emu.field('string', {primaryKey: true}),
-	room: Emu.field("Chat.Room"),
-	user: Emu.field("Chat.User"),
-	text: Emu.field('string'),
-	time: Emu.field('date')
+	room: Emu.field("string"),
+	user: Emu.field("string"),
+	message: Emu.field('string'),
+	time: Emu.field('string')
 });

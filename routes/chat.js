@@ -194,4 +194,19 @@ module.exports = function(app, models) {
 			}
 		});
 	});
+	app.post('/api/messages', function(req, res) {
+		var params = req.body;
+		console.log(params);
+		message = new models.Message(params);
+		message.save(function(err) {
+			if (err) {
+				res.json(500, {
+					error: err
+				});
+			}
+			else {
+				res.json(200, message);
+			}
+		});
+	});
 };

@@ -2,7 +2,7 @@ module.exports = function(io, models) {
 	io.sockets.on('connection', function(socket) {
 		socket.on('newMessage', function(data) {
 			console.log('newMessage');
-			socket.broadcast.to(data.room_id).emit('newMessage', data);
+			socket.broadcast.to(data.room).emit('newMessage', data);
 		});
 		socket.on('newRoom', function(data) {
 			console.log('newRoom', data);
@@ -68,8 +68,6 @@ module.exports = function(io, models) {
 						});
 						models.Room.find({_id: {$in: room_ids}}, function(err, rooms) {
 							if (!err && rooms) {
-	 							var now = new Date().getTime() / 1000;  
-				 				console.log('Socket leaveRoom', now);
 								socket.emit('reloadUserRooms', rooms);
 								socket.leave(data.room_id);
 								socket.broadcast.to(data.room_id).emit('leaveRoom', data)

@@ -116,7 +116,7 @@
 				  		<div class="newMessage">
 				  			<button class="btn btn-primary" id="sendMessage" {{action sendMessage}}>Send</button>
 				  			<div class="input">
-				  				{{view Chat.NewMessageView class="newMessage-input"}}
+				  				<input type="text" {{bind-attr data-id=_id}} class="newMessage-input" value="" />
 				  			</div>
 				  		</div>
 				  	</div>
@@ -224,6 +224,7 @@
 		</script>
 <!-- End -->
 <!-- Including scripts -->
+		<script type="text/javascript" src="/js/libs/moment.min.js"></script>
 		<script type="text/javascript" src="/js/libs/jquery.js"></script>
 		<script type="text/javascript" src="/js/libs/jquery.cookie.js"></script>
 		<script type="text/javascript" src="/js/libs/bootstrap.js"></script>
