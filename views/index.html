@@ -93,9 +93,9 @@
 			  	{{#each userRooms}}
 			  	<div class="tab-pane" {{bind-attr id=_id}}>
 					<div class="span2">
-						{{#each users}}
+						{{#each controller.currentRoomUsers}}
 						<p class="user">
-							<a href="" {{action sendToUser this}}>{{login}}</a>
+							<a href="#" {{action sendToUser this}}>{{login}}</a>
 						</p>
 						{{/each}}
 					</div>
@@ -142,7 +142,7 @@
 				<ul id="room_list" class="nav nav-tabs">
 					<li class="active btn btn-primary"><a href="#list" data-toggle="tab">Room list</a></li>
 					{{#each userRooms}}
-					<li class="btn">{{sharp_href _id title}}<button type="button" class="close" title="Leave room" {{action leave_room this}}>&times;</button></li>
+					<li class="btn" {{action refreshUserList this on="click"}}>{{sharp_href _id title}}<button type="button" class="close" title="Leave room" {{action leave_room this}}>&times;</button></li>
 					{{/each}}
 				</ul>
 			</div>

@@ -48,11 +48,10 @@ module.exports = function(io, models) {
 						models.Room.find({_id: {$in: room_ids}}, function(err, rooms) {
 							if (!err && rooms) {
 								socket.emit('reloadUserRooms', rooms);
-								socket.leave(data.room_id);
+								socket.join(data.room_id);
+								socket.broadcast.to(data.room_id).emit('joinUser', data);
 							}
 						});
-						socket.join(data.room_id);
-						socket.broadcast.to(data.room_id).emit('joinUser', data);
 					}
 				}
 			});
@@ -71,6 +70,7 @@ module.exports = function(io, models) {
 							if (!err && rooms) {
 								socket.emit('reloadUserRooms', rooms);
 								socket.leave(data.room_id);
+								socket.broadcast.to(data.room_id).emit('leaveRoom', data)
 							}
 						});
 					}

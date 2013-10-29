@@ -69,7 +69,10 @@ Chat.ChatController = Em.ObjectController.extend({
 			});
 		},
 		join_room: function(room) {
-			this.socket.emit('joinRoom', {room_id: room.primaryKeyValue(), user_id: this.get('user')._attributes['_id']});
+			var room_id = room._attributes?room._attributes['_id']:room._id,
+				user_id = this.get('user')._attributes?this.get('user')._attributes['_id']:this.get('user')._id;
+			this.socket.emit('joinRoom', {room_id: room_id, user_id: user_id});
+			this.set('currentRoom', room);
 		},
 		leave_room: function(room) {
 			console.log(room.title);
@@ -84,10 +87,14 @@ Chat.ChatController = Em.ObjectController.extend({
 				success: function(data) {
 					self.socket.emit('leaveRoom', {user_id: user_id, room_id: room._id});
 				},
-				error: function(data) {
+				error: function(err) {
 					console.log(data);
 				}
 			});
+		},
+		refreshUserList: function(room) {
+			this.set('currentRoom', room);
+			this.getRoomUsers();
 		}
 	},
 	getUserRooms: function() {
@@ -99,7 +106,22 @@ Chat.ChatController = Em.ObjectController.extend({
 			success: function(data) {
 				self.set('userRooms', data);
 			},
-			error: function(data) {
+			error: function(err) {
+
+			}
+		})
+	},
+	getRoomUsers: function() {
+		var self = this;
+		var curRoom = this.get('currentRoom');
+		var room_id = curRoom._attributes?curRoom._attributes['_id']:curRoom._id;
+		$.ajax({
+			url: '/api/rooms/' + room_id + '/users',
+			method: 'GET',
+			success: function(data) {
+				self.set('currentRoomUsers', data);
+			},
+			error: function(err) {
 
 			}
 		})
@@ -112,6 +134,12 @@ Chat.ChatController = Em.ObjectController.extend({
 		reloadUserRooms: function(data) {
 			console.log('ReloadUserRooms');
 			this.set('userRooms', data);
+		},
+		joinRoom: function() {
+			this.getRoomUsers();
+		},
+		leaveRoom: function() {
+			this.getRoomUsers();
 		}
 	}
 });
