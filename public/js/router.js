@@ -6,18 +6,21 @@ Chat.IndexRoute = Em.Route.extend({
 	model: function() {
 		var self = this;
 		var uuid = null;
-		var promise = Em.Deferred.create();
 		if (uuid = Chat.authCookie()) {
 			Em.$.ajax({
 				url: '/api/users/uuid/' + uuid,
 				method: "GET",
 				success: function(data) {
-					// this.controllerFor('user').set('user', data);
-					// this.controllerFor('chat').set('user', data);
-					// this.controllerFor('chat').getUserRooms();
-					// this.controllerFor('chat').getRoomUsers();
-					// this.controllerFor('chat').set('allRooms', Chat.Room.find());
-					Chat.authCookie(data.sessionId);
+					var userController = Chat.__container__.lookup('controller:user'),
+						chatController = Chat.__container__.lookup('controller:chat');
+					user = Chat.User.createRecord(data);
+					userController.set('user', user);
+					userController.set('loggedIn', true);
+					chatController.set('loggedIn', true);
+					chatController.set('user', user);
+					chatController.getUserRooms();
+					chatController.getRoomUsers();
+					chatController.set('allRooms', Chat.Room.find());
 				},
 				error: function(err) {
 

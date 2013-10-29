@@ -68,7 +68,7 @@ module.exports = function(app, models) {
 					_.each(userRoom.room, function(id) {
 						room_ids.push(new ObjectID(id.toString()));
 					});
-					models.Room.find({_id: {$in: room_ids}}, function(err, rooms) {
+					models.Room.find({"_id": {$in: room_ids}}, function(err, rooms) {
 						if (err) {
 							res.json(500, {
 								error: err
@@ -95,7 +95,7 @@ module.exports = function(app, models) {
 				});
 			}
 			else {
-				var room = new models.Room({creator: user._id, title: req.body.title, description: req.body.description});
+				var room = new models.Room({creator: req.body.creator, title: req.body.title, description: req.body.description});
 				room.save(function(err) {
 					if (err) {
 						res.json(500, {
@@ -103,7 +103,7 @@ module.exports = function(app, models) {
 						});
 					}
 					else {
-						models.UserRoom.findOne({user: user._id.toString()}, function(err, userRoom) {
+						models.UserRoom.findOne({user: req.body.creator}, function(err, userRoom) {
 							if (err) {
 								res.json(500, {
 									error: err
@@ -148,15 +148,11 @@ module.exports = function(app, models) {
 					}
 					else {
 						_.each(rooms, function(userRoom) {
-							var i = -1;
-							_.each(userRoom.room, function(id) {
-								i++;
-								if (id.toString() === req.params.id) {
-									return;
-								}
+							var idx = _.findIndex(userRoom.room, function(id) {
+								return id.toString() == req.params.id;
 							});
-							if (i > -1) {
-						 		userRoom.room.splice(i, 1);
+							if (idx > -1) {
+						 		userRoom.room.splice(idx, 1);
 						 		userRoom.save();
 						 	}
 						});
@@ -177,16 +173,20 @@ module.exports = function(app, models) {
 			else {
 				if (userRoom) {
 					userRoom = userRoom[0];
-					var i = 0;
-					_.each(userRoom.room, function(id) {
-						if (id.toString() === req.params.id) {
-							return;
-						}
-						i++;
+					var idx = _.findIndex(userRoom.room, function(id) {
+						return id.toString() == req.params.id;
 					});
-			 		userRoom.room.splice(i, 1);
-			 		userRoom.save();
-					res.send(200, '');
+			 		userRoom.room.splice(idx, 1);
+			 		userRoom.save(function(err) {
+			 			if (err) {
+			 				res.json(500, {
+			 					error: err
+			 				});
+			 			}
+			 			else {
+			 				res.send(200, '');
+			 			}
+			 		});
 				}
 				else {
 					res.send(404, '');

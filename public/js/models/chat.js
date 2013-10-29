@@ -1,3 +1,7 @@
+Chat.ApplicationModel = Em.Object.extend({
+	sessionId: null
+});
+
 Chat.Room = Emu.Model.extend({
 	_id: Emu.field('string', {primaryKey: true}),
 	title: Emu.field('string'),

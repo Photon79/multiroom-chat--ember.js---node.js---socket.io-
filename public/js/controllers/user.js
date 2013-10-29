@@ -21,7 +21,6 @@ Chat.UserController = Em.ObjectController.extend({
 			result.on('didFinishLoading', function() {
 				if (result.get('content') && result.get('content').length > 0) {
 					var user_data = result.get('content')[0];
-					console.log('SessionId', user_data.get('sessionId'));
 					Chat.authCookie(user_data.get('sessionId'));
 					user = Chat.User.createRecord(user_data);
 					user.set('loggedIn', true);

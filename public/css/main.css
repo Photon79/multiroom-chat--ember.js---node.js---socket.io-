@@ -99,3 +99,6 @@ li.btn-primary a[data-toggle="tab"] {
 #mainContent {
 	padding: 10px 10px 0 10px;
 }
+ul.nav {
+	margin-bottom: 0 !important;
+}
