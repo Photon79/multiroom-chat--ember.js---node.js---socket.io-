@@ -62,7 +62,7 @@ module.exports = function(app, models) {
 				});
 			}
 			else {
-				if (userRoom) {
+				if (userRoom && userRoom.length > 0) {
 					userRoom = userRoom[0];
 					var room_ids = [];
 					_.each(userRoom.room, function(id) {
@@ -87,7 +87,8 @@ module.exports = function(app, models) {
 	});
 	// Create room
 	app.post('/api/rooms', function(req, res) {
-		models.User.findOne(req.body.creator, function(err, user) {
+		console.log(req.body);
+		models.User.findOne({_id: new ObjectID(req.body.creator), loggedIn: true}, function(err, user) {
 			if (err) {
 				res.json(500, {
 					error: err
@@ -110,20 +111,6 @@ module.exports = function(app, models) {
 							}
 							else {
 								if (userRoom) {
-									userRoom.room.push(room._id);
-									userRoom.save(function(err) {
-										if (err) {
-											res.json(500, {
-												error: err
-											});
-										}
-										else {
-											res.json(200, room);
-										}
-									});
-								}
-								else {
-									userRoom = new models.UserRoom({user: user._id.toString()});
 									userRoom.room.push(room._id);
 									userRoom.save(function(err) {
 										if (err) {
@@ -178,10 +165,6 @@ module.exports = function(app, models) {
 				res.send(200, '');
 			}
 		});
-	});
-	// Join to room
-	app.post('/api/rooms/:room_id/:user_id', function(req, res) {
-
 	});
 	// Leave room
 	app.delete('/api/rooms/logout/:id/:user_id', function(req, res) {

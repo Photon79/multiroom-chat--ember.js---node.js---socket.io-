@@ -18,24 +18,26 @@ Chat.UserController = Em.ObjectController.extend({
 			var self = this;
 			result = Chat.User.find({login: params.login, pass: CryptoJS.MD5(params.pass).toString(), loggedIn: false});
 			result.on('didFinishLoading', function() {
-				var user_data = result.get('content')[0];
-				user = Chat.User.createRecord(user_data);
-				user.set('loggedIn', true);
-				user.save();
-				self.set('user', user);
-				self.set('loggedIn', true);
-				self.get('controllers.chat').set('loggedIn', true);
-				self.get('controllers.chat').set('allRooms', Chat.Room.find());
-				$.ajax({
-					url: '/api/rooms/user/' + user_data.primaryKeyValue(),
-					success: function(data) {
-						self.get('controllers.chat').set('userRooms', data);
-					},
-					error: function(err) {
+				if (result.get('content') && result.get('content').length > 0) {
+					var user_data = result.get('content')[0];
+					user = Chat.User.createRecord(user_data);
+					user.set('loggedIn', true);
+					user.save();
+					self.set('user', user);
+					self.set('loggedIn', true);
+					self.get('controllers.chat').set('loggedIn', true);
+					self.get('controllers.chat').set('allRooms', Chat.Room.find());
+					$.ajax({
+						url: '/api/rooms/user/' + user_data.primaryKeyValue(),
+						success: function(data) {
+							self.get('controllers.chat').set('userRooms', data);
+						},
+						error: function(err) {
 
-					}
-				});
-				self.get('controllers.chat').set('user', user);
+						}
+					});
+					self.get('controllers.chat').set('user', user);
+				}
 			});
 		},
 		registerUser: function(params) {

@@ -4,8 +4,10 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Simple chat with multiroom</title>
-		<link rel="stylesheet" href="css/bootstrap.css" />
-		<link rel="stylesheet" href="css/main.css" media="all" />
+		<link rel="stylesheet" href="/css/bootstrap.css" />
+		<link rel="stylesheet" href="/css/main.css" media="all" />
+		<link rel="icon" type="image/vnd.microsoft.icon" href="/img/favicon.ico" />
+		<link rel="shortcut icon" type="image/vnd.microsoft.icon" href="/img/favicon.ico" />
 		<script type="text/javascript" src="/socket.io/socket.io.js"></script>
 	</head>
 	<body>
@@ -61,8 +63,8 @@
 <!-- Chat templates -->
 		<script type="text/x-handlebars" data-template-name="chat">
 			{{#if loggedIn}}
-			{{outlet main}}
 			{{outlet list}}
+			{{outlet main}}
 			{{/if}}
 		</script>
 		<script type="text/x-handlebars" data-template-name="chat/main">
@@ -73,11 +75,11 @@
 			  		<table class="table table-hover table-condensed left">
 			  			<tbody>
 				  			{{#each allRooms}}
-				  			<tr {{bind-attr id=_id}} title="Join to room">
-				  				<td class="pointer" {{action "open_room" this on="click"}}>
+				  			<tr title="Join to room">
+				  				<td class="pointer" {{action "join_room" this on="click"}}>
 			  						{{title}}
 				  				</td>
-				  				<td class="pointer" {{action "open_room" this on="click"}}>
+				  				<td class="pointer" {{action "join_room" this on="click"}}>
 				  					<span class="description">{{description}}</span>
 				  				</td>
 				  				<td>
@@ -89,7 +91,7 @@
 				  	</table>
 			  	</div>
 			  	{{#each userRooms}}
-			  	<div class="tab-pane" {{bind-attr data-room=_id}}>
+			  	<div class="tab-pane" {{bind-attr id=_id}}>
 					<div class="span2">
 						{{#each users}}
 						<p class="user">
@@ -140,7 +142,7 @@
 				<ul id="room_list" class="nav nav-tabs">
 					<li class="active btn btn-primary"><a href="#list" data-toggle="tab">Room list</a></li>
 					{{#each userRooms}}
-					<li class="btn" {{bind-attr data-id=_id}}>{{sharp_href _id title}}<button type="button" class="close" title="Leave room" {{action leave_room this}}>&times;</button></li>
+					<li class="btn">{{sharp_href _id title}}<button type="button" class="close" title="Leave room" {{action leave_room this}}>&times;</button></li>
 					{{/each}}
 				</ul>
 			</div>
@@ -222,23 +224,23 @@
 		</script>
 <!-- End -->
 <!-- Including scripts -->
-		<script type="text/javascript" src="js/libs/jquery.js"></script>
-		<script type="text/javascript" src="js/libs/bootstrap.js"></script>
-		<script type="text/javascript" src="js/libs/lodash.js"></script>
-		<script type="text/javascript" src="js/libs/handlebars.js"></script>
-		<script type="text/javascript" src="js/libs/ember.js"></script>
-		<script type="text/javascript" src="js/libs/ember-emu.js"></script>
-		<script type="text/javascript" src="js/libs/ember-sockets.js"></script>
-		<script type="text/javascript" src="js/libs/md5.js"></script>
-		<script type="text/javascript" src="js/helpers/main.js"></script>
-		<script type="text/javascript" src="js/app.js"></script>
-		<script type="text/javascript" src="js/views/user.js"></script>
-		<script type="text/javascript" src="js/views/chat.js"></script>
-		<script type="text/javascript" src="js/models/user.js"></script>
-		<script type="text/javascript" src="js/models/chat.js"></script>
-		<script type="text/javascript" src="js/router.js"></script>
-		<script type="text/javascript" src="js/controllers/chat.js"></script>
-		<script type="text/javascript" src="js/controllers/user.js"></script>
+		<script type="text/javascript" src="/js/libs/jquery.js"></script>
+		<script type="text/javascript" src="/js/libs/bootstrap.js"></script>
+		<script type="text/javascript" src="/js/libs/lodash.js"></script>
+		<script type="text/javascript" src="/js/libs/handlebars.js"></script>
+		<script type="text/javascript" src="/js/libs/ember.js"></script>
+		<script type="text/javascript" src="/js/libs/ember-emu.js"></script>
+		<script type="text/javascript" src="/js/libs/ember-sockets.js"></script>
+		<script type="text/javascript" src="/js/libs/md5.js"></script>
+		<script type="text/javascript" src="/js/helpers/main.js"></script>
+		<script type="text/javascript" src="/js/app.js"></script>
+		<script type="text/javascript" src="/js/views/user.js"></script>
+		<script type="text/javascript" src="/js/views/chat.js"></script>
+		<script type="text/javascript" src="/js/models/user.js"></script>
+		<script type="text/javascript" src="/js/models/chat.js"></script>
+		<script type="text/javascript" src="/js/router.js"></script>
+		<script type="text/javascript" src="/js/controllers/chat.js"></script>
+		<script type="text/javascript" src="/js/controllers/user.js"></script>
 <!-- End -->
 	</body>
 </html>

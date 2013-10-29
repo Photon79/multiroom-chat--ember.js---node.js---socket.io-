@@ -1,3 +1,7 @@
+/*
+ * TODO: validate all input fields
+ */
+
 Chat.ChatController = Em.ObjectController.extend({
 	needs: ['user'],
 	content: [],
@@ -20,6 +24,26 @@ Chat.ChatController = Em.ObjectController.extend({
 			room.on('didFinishSaving', function() {
 				self.socket.emit('newRoom', {title: room.get('title'), id: room.primaryKeyValue(), user_id: user_id});
 			});
+		},
+		delete_room: function(room) {
+			var self = this;
+			if (room._attributes) {
+				var room_id = room.primaryKeyValue();
+				this.store.deleteRecord(room).then(function() {
+					self.socket.emit('deleteRoom', room_id);
+					self.getUserRooms();
+				});
+			}
+			else {
+				var room_id = room._id;
+				room = Chat.Room.find(room_id);
+				room.on('didFinishLoading', function() {
+					this.store.deleteRecord(room).then(function() {
+						self.socket.emit('deleteRoom', room_id);
+						self.getUserRooms();
+					});
+				});
+			}
 		},
 		sendToUser: function() {
 
@@ -44,7 +68,11 @@ Chat.ChatController = Em.ObjectController.extend({
 				});
 			});
 		},
+		join_room: function(room) {
+			this.socket.emit('joinRoom', {room_id: room.primaryKeyValue(), user_id: this.get('user')._attributes['_id']});
+		},
 		leave_room: function(room) {
+			console.log(room.title);
 			var self = this;
 			var user_id = this.get('user')._attributes['_id'];
 			$.ajax({
@@ -60,15 +88,6 @@ Chat.ChatController = Em.ObjectController.extend({
 					console.log(data);
 				}
 			});
-		},
-		delete_room: function(room) {
-			var room_id = room.primaryKeyValue();
-			this.store.deleteRecord(room);
-			this.socket.emit('deleteRoom', room_id);
-			this.getUserRooms();
-		},
-		join_room: function(room) {
-			this.socket.emit('joinRoom', {room_id: room.primaryKeyValue(), user_id: this.get('user')._attributes['_id']});
 		}
 	},
 	getUserRooms: function() {
@@ -88,7 +107,7 @@ Chat.ChatController = Em.ObjectController.extend({
 	sockets: {
 		reloadRoomList: function(data) {
 			console.log('ReloadRoomList');
-			this.set('allRooms', Chat.Room.find());
+			this.set('allRooms', data);
 		},
 		reloadUserRooms: function(data) {
 			console.log('ReloadUserRooms');

@@ -96,3 +96,6 @@ li.btn-primary a[data-toggle="tab"] {
 .table th, .table td {
 	border-top: 0 none !important;
 }
+#mainContent {
+	padding: 10px 10px 0 10px;
+}

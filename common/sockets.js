@@ -9,10 +9,59 @@ module.exports = function(io, models) {
 			models.Room.find(function(err, rooms) {
 				if (!err) {
 					io.sockets.emit('reloadRoomList', rooms);
+					models.UserRoom.find({user: data.user_id}, function(err, userRoom) {
+						console.log(userRoom);
+						if (!err && userRoom && userRoom.length > 0) {
+							userRoom = userRoom[0];
+							var room_ids = [];
+							_.each(userRoom.room, function(id) {
+								room_ids.push(new ObjectID(id.toString()));
+							});
+							models.Room.find({_id: {$in: room_ids}}, function(err, rooms) {
+								if (!err && rooms) {
+									socket.emit('reloadUserRooms', rooms);
+								}
+							});
+						}
+					});
 				}
-				models.UserRoom.find({user: data.user_id}, function(err, userRoom) {
-					console.log(userRoom);
-					if (!err && userRoom && userRoom.length > 0) {
+			});
+
+		});
+		socket.on('joinRoom', function(data) {
+			models.UserRoom.find({user: data.user_id}, function(err, userRoom) {
+				if (!err) {
+					if (userRoom && userRoom.length) {
+						userRoom = userRoom[0];
+						userRoom.room.push(new ObjectID(data.room_id));
+						userRoom.save(function(err, room) {
+							if(!err && room) {
+								returnUserRooms(room);
+							}
+						});
+					}
+					function returnUserRooms(userRoom) {
+						var room_ids = [];
+						_.each(userRoom.room, function(id) {
+							room_ids.push(new ObjectID(id.toString()));
+						});
+						models.Room.find({_id: {$in: room_ids}}, function(err, rooms) {
+							if (!err && rooms) {
+								socket.emit('reloadUserRooms', rooms);
+								socket.leave(data.room_id);
+							}
+						});
+						socket.join(data.room_id);
+						socket.broadcast.to(data.room_id).emit('joinUser', data);
+					}
+				}
+			});
+		});
+		socket.on('leaveRoom', function(data) {
+			socket.broadcast.to(data.room_id).emit('leaveUser', data.user_id);
+			models.UserRoom.find({user: data.user_id}, function(err, userRoom) {
+				if (!err) {
+					if (userRoom && userRoom.length) {
 						userRoom = userRoom[0];
 						var room_ids = [];
 						_.each(userRoom.room, function(id) {
@@ -21,33 +70,10 @@ module.exports = function(io, models) {
 						models.Room.find({_id: {$in: room_ids}}, function(err, rooms) {
 							if (!err && rooms) {
 								socket.emit('reloadUserRooms', rooms);
+								socket.leave(data.room_id);
 							}
 						});
 					}
-				});
-			});
-
-		});
-		socket.on('joinUser', function(data) {
-			console.log('joinUser');
-			socket.join(data.room_id);
-			socket.broadcast.to(data.room_id).emit('joinUser', data);
-		});
-		socket.on('leaveRoom', function(data) {
-			socket.broadcast.to(data.room_id).emit('leaveUser', data.user_id);
-			models.UserRoom.find({user: data.user_id}, function(err, userRoom) {
-				if (!err && userRoom) {
-					userRoom = userRoom[0];
-					var room_ids = [];
-					_.each(userRoom.room, function(id) {
-						room_ids.push(new ObjectID(id.toString()));
-					});
-					models.Room.find({_id: {$in: room_ids}}, function(err, rooms) {
-						if (!err && rooms) {
-							socket.emit('reloadUserRooms', rooms);
-							socket.leave(data.room_id);
-						}
-					});
 				}
 			});
 		});

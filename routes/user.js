@@ -57,7 +57,17 @@ module.exports = function(app, models) {
         		    	}
                         else {
                             console.log('Register user');
-                            res.json(200, [user]);
+                            userRoom = new models.UserRoom({user: user._id, room: []});
+                            userRoom.save(function(err){
+                                if(err) {
+                                    res.json(500, {
+                                        error: err
+                                    });
+                                }
+                                else {
+                                    res.json(200, [user]);
+                                }
+                            });
                         }
         		    });
         		}
